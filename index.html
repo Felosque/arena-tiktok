@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Arena de Gladiadores</title>
+
     <link href="https://fonts.cdnfonts.com/css/minecraft-4" rel="stylesheet">
+
     <style>
         body {
             margin: 0;
@@ -17,27 +19,26 @@
             background: rgba(0, 0, 0, 0.85);
             min-height: 100vh;
             padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        /* ===== TITLE ===== */
-        .title-image {
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
+        /* 🖼️ TITLE */
         .title-image img {
             width: 260px;
             max-width: 100%;
             image-rendering: pixelated;
+            margin-bottom: 15px;
         }
 
-        /* ===== PODIUM ===== */
+        /* 🏆 PODIO */
         .podium {
             display: flex;
             justify-content: center;
             align-items: flex-end;
-            gap: 12px;
-            margin: 15px 0 30px 0;
+            gap: 14px;
+            margin: 20px 0;
         }
 
         .zombie {
@@ -49,132 +50,63 @@
         }
 
         .first img {
-            width: 120px;
+            width: 130px;
         }
 
         .second img {
-            width: 95px;
+            width: 105px;
         }
 
         .third img {
-            width: 90px;
+            width: 95px;
         }
 
-        .zombie .name {
-            font-size: 13px;
+        .name {
             margin-top: 6px;
+            font-size: 13px;
             text-shadow: 2px 2px #000;
         }
 
-        .zombie .points {
+        .points {
             font-size: 11px;
-            color: #ddd;
+            color: #ccc;
         }
 
-        /* ===== SHOW RANKING BUTTON ===== */
-        .show-ranking {
+        /* 🔘 BOTONES */
+        .buttons {
+            margin-top: 25px;
             display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
             justify-content: center;
-            margin: 25px 0 35px 0;
         }
 
-        .show-ranking button {
+        .buttons button,
+        .buttons a {
             padding: 14px 22px;
-            font-size: 16px;
             font-family: 'Minecraft', monospace;
+            font-size: 14px;
             background: #5a5a5a;
             border: 4px solid #2f2f2f;
             box-shadow: inset 0 0 0 3px #8b8b8b;
             color: #fff;
             cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .show-ranking button:hover {
-            background: #3f3f3f;
-            transform: scale(1.05);
-            transition: transform 0.2s;
-        }
-
-        /* ===== PANEL ===== */
-        .panel {
-            max-width: 1100px;
-            margin: auto;
-            background: #c6c6c6;
-            border: 5px solid #2f2f2f;
-            box-shadow: inset 0 0 0 5px #8b8b8b;
-            padding: 12px;
-            margin-top: 20px;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        /* ===== SEARCH ===== */
-        .search {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-
-        input {
-            flex: 1;
-            padding: 8px;
-            font-family: 'Minecraft', monospace;
-            background: #7a7a7a;
-            border: 4px solid #2f2f2f;
-            color: #fff;
-        }
-
-        button {
-            font-family: 'Minecraft', monospace;
-            background: #5a5a5a;
-            border: 4px solid #2f2f2f;
-            color: #fff;
-            cursor: pointer;
-            padding: 8px 12px;
-        }
-
-        /* ===== TABLE ===== */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }
-
-        th,
-        td {
-            border: 4px solid #2f2f2f;
-            padding: 6px;
+            text-decoration: none;
             text-align: center;
         }
 
-        th {
-            background: #3a3a3a;
+        .buttons button:hover,
+        .buttons a:hover {
+            background: #3f3f3f;
         }
 
-        td {
-            background: #6a6a6a;
+        /* 💰 PayPal button slight highlight */
+        .donate {
+            background: #6b8cff;
         }
 
-        tr:nth-child(even) td {
-            background: #5a5a5a;
-        }
-
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        /* ===== DESKTOP ===== */
-        @media (min-width: 768px) {
-            .panel {
-                display: block !important;
-            }
+        .donate:hover {
+            background: #4e6fe6;
         }
     </style>
 </head>
@@ -183,51 +115,24 @@
     <div class="overlay">
 
         <div class="title-image">
-            <img src="titulo.png">
+            <img src="titulo.png" alt="Arena Gladiadora">
         </div>
 
         <div class="podium" id="podium"></div>
 
-        <div class="show-ranking">
-            <button id="showRankingBtn" onclick="toggleRanking()">Ver mi ranking</button>
-        </div>
+        <div class="buttons">
+            <button onclick="location.href='ranking.html'">
+                Ver mi posición en el ranking
+            </button>
 
-        <!-- TABLA OCULTA INICIALMENTE -->
-        <div class="panel hidden" id="rankingPanel">
-
-            <div class="search">
-                <input id="searchInput" placeholder="Buscar gladiador...">
-                <button onclick="search()">Buscar</button>
-                <button onclick="reset()">Reset</button>
-            </div>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>Posición</th>
-                        <th>Gladiador</th>
-                        <th>Nivel</th>
-                        <th>Puntos</th>
-                    </tr>
-                </thead>
-                <tbody id="tbody"></tbody>
-            </table>
-
-            <div class="pagination">
-                <button onclick="prev()">◀</button>
-                <span id="pageInfo"></span>
-                <button onclick="next()">▶</button>
-            </div>
+            <a class="donate" href="https://www.paypal.com/donate/?hosted_button_id=SLBWAQ5AYGGPY" target="_blank">
+                Donar por PayPal
+            </a>
         </div>
 
     </div>
 
     <script>
-        const PAGE_SIZE = 20;
-        let players = [];
-        let filtered = [];
-        let page = 0;
-
         fetch("users.csv")
             .then(r => r.text())
             .then(csv => {
@@ -235,108 +140,39 @@
                 const headers = lines[0].split(",");
 
                 const u = headers.indexOf("username");
-                const l = headers.indexOf("level");
                 const a = headers.indexOf("arena_points");
+
+                const players = [];
 
                 for (let i = 1; i < lines.length; i++) {
                     const c = lines[i].split(",");
                     players.push({
-                        position: i,
                         username: c[u],
-                        level: c[l],
                         arena: c[a]
                     });
                 }
 
-                filtered = players;
-                renderPodium();
-                renderTable();
+                renderPodium(players);
             });
 
-        function renderPodium() {
-            const p = document.getElementById("podium");
-            const order = [2, 0, 1];
-            const cls = ["third", "first", "second"];
-            const img = ["Jugador_3.png", "Jugador_1.png", "Jugador_2.png"];
+        function renderPodium(players) {
+            const podium = document.getElementById("podium");
 
-            p.innerHTML = "";
+            const order = [2, 0, 1];
+            const classes = ["third", "first", "second"];
+            const images = ["Jugador_3.png", "Jugador_1.png", "Jugador_2.png"];
+
+            podium.innerHTML = "";
 
             for (let i = 0; i < 3; i++) {
-                const pl = players[order[i]];
-                p.innerHTML += `
-        <div class="zombie ${cls[i]}">
-            <img src="${img[i]}">
-            <div class="name">${pl.username}</div>
-            <div class="points">${pl.arena} victorias</div>
-        </div>`;
-            }
-        }
-
-        function toggleRanking() {
-            const panel = document.getElementById("rankingPanel");
-            const button = document.getElementById("showRankingBtn");
-
-            if (panel.classList.contains("hidden")) {
-                // Mostrar la tabla
-                panel.classList.remove("hidden");
-                button.textContent = "Ocultar ranking";
-                panel.scrollIntoView({ behavior: "smooth" });
-            } else {
-                // Ocultar la tabla
-                panel.classList.add("hidden");
-                button.textContent = "Ver mi ranking";
-            }
-        }
-
-        function renderTable() {
-            const tbody = document.getElementById("tbody");
-            const pageInfo = document.getElementById("pageInfo");
-            const start = page * PAGE_SIZE;
-
-            tbody.innerHTML = "";
-
-            for (let i = start; i < start + PAGE_SIZE && i < filtered.length; i++) {
-                const p = filtered[i];
-                tbody.innerHTML += `
-        <tr>
-            <td>${p.position}</td>
-            <td>${p.username}</td>
-            <td>${p.level}</td>
-            <td>${p.arena}</td>
-        </tr>`;
-            }
-
-            const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
-            pageInfo.innerText = `Página ${page + 1} / ${totalPages}`;
-        }
-
-        function search() {
-            const searchInput = document.getElementById("searchInput");
-            const q = searchInput.value.toLowerCase();
-            filtered = players.filter(p => p.username.toLowerCase().includes(q));
-            page = 0;
-            renderTable();
-        }
-
-        function reset() {
-            const searchInput = document.getElementById("searchInput");
-            searchInput.value = "";
-            filtered = players;
-            page = 0;
-            renderTable();
-        }
-
-        function next() {
-            if ((page + 1) * PAGE_SIZE < filtered.length) {
-                page++;
-                renderTable();
-            }
-        }
-
-        function prev() {
-            if (page > 0) {
-                page--;
-                renderTable();
+                const p = players[order[i]];
+                podium.innerHTML += `
+            <div class="zombie ${classes[i]}">
+                <img src="${images[i]}">
+                <div class="name">${p.username}</div>
+                <div class="points">${p.arena} victorias</div>
+            </div>
+        `;
             }
         }
     </script>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ranking Gladiadores</title>
+
+    <link href="https://fonts.cdnfonts.com/css/minecraft-4" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Minecraft', monospace;
+            background: url("fondo.png") center / cover fixed;
+            color: #fff;
+        }
+
+        .overlay {
+            background: rgba(0, 0, 0, 0.85);
+            min-height: 100vh;
+            padding: 14px;
+        }
+
+        .panel {
+            max-width: 1100px;
+            margin: auto;
+            background: #c6c6c6;
+            border: 5px solid #2f2f2f;
+            box-shadow: inset 0 0 0 5px #8b8b8b;
+            padding: 12px;
+        }
+
+        .search {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        input {
+            flex: 1;
+            padding: 8px;
+            font-family: 'Minecraft', monospace;
+            background: #7a7a7a;
+            border: 4px solid #2f2f2f;
+            color: #fff;
+        }
+
+        button {
+            padding: 8px 12px;
+            font-family: 'Minecraft', monospace;
+            background: #5a5a5a;
+            border: 4px solid #2f2f2f;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th,
+        td {
+            border: 4px solid #2f2f2f;
+            padding: 6px;
+            text-align: center;
+        }
+
+        th {
+            background: #3a3a3a;
+        }
+
+        td {
+            background: #6a6a6a;
+        }
+
+        tr:nth-child(even) td {
+            background: #5a5a5a;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="overlay">
+
+        <div class="panel">
+
+            <div class="search">
+                <input id="searchInput" placeholder="Buscar gladiador...">
+                <button onclick="search()">Buscar</button>
+                <button onclick="reset()">Reset</button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Posición</th>
+                        <th>Gladiador</th>
+                        <th>Nivel</th>
+                        <th>Puntos</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody"></tbody>
+            </table>
+
+            <div class="pagination">
+                <button onclick="prev()">◀</button>
+                <span id="pageInfo"></span>
+                <button onclick="next()">▶</button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        const PAGE_SIZE = 20;
+        let players = [];
+        let filtered = [];
+        let page = 0;
+
+        fetch("users.csv")
+            .then(r => r.text())
+            .then(csv => {
+                const lines = csv.replace(/\r/g, "").split("\n").filter(l => l.trim());
+                const headers = lines[0].split(",");
+
+                const u = headers.indexOf("username");
+                const l = headers.indexOf("level");
+                const a = headers.indexOf("arena_points");
+
+                for (let i = 1; i < lines.length; i++) {
+                    const c = lines[i].split(",");
+                    players.push({
+                        position: i,
+                        username: c[u],
+                        level: c[l],
+                        arena: c[a]
+                    });
+                }
+
+                filtered = players;
+                renderTable();
+            });
+
+        function renderTable() {
+            tbody.innerHTML = "";
+            const start = page * PAGE_SIZE;
+
+            for (let i = start; i < start + PAGE_SIZE && i < filtered.length; i++) {
+                const p = filtered[i];
+                tbody.innerHTML += `
+            <tr>
+                <td>${p.position}</td>
+                <td>${p.username}</td>
+                <td>${p.level}</td>
+                <td>${p.arena}</td>
+            </tr>`;
+            }
+
+            pageInfo.innerText =
+                `Página ${page + 1} / ${Math.ceil(filtered.length / PAGE_SIZE)}`;
+        }
+
+        function search() {
+            const q = searchInput.value.toLowerCase();
+            filtered = players.filter(p => p.username.toLowerCase().includes(q));
+            page = 0;
+            renderTable();
+        }
+
+        function reset() {
+            searchInput.value = "";
+            filtered = players;
+            page = 0;
+            renderTable();
+        }
+
+        function next() {
+            if ((page + 1) * PAGE_SIZE < filtered.length) {
+                page++;
+                renderTable();
+            }
+        }
+
+        function prev() {
+            if (page > 0) {
+                page--;
+                renderTable();
+            }
+        }
+    </script>
+
+</body>
+
+</html>
