@@ -27,11 +27,22 @@
             }
         }
 
-
-        h1 {
+        /* 🖼️ TITLE */
+        .title-image {
             text-align: center;
-            text-shadow: 4px 4px #000;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+        }
+
+        .title-image img {
+            width: 420px;
+            max-width: 100%;
+            image-rendering: pixelated;
+        }
+
+        @media (max-width: 600px) {
+            .title-image img {
+                width: 260px;
+            }
         }
 
         /* 🏆 PODIUM */
@@ -39,8 +50,8 @@
             display: flex;
             justify-content: center;
             align-items: flex-end;
-            gap: 20px;
-            margin: 25px 0;
+            gap: 15px;
+            margin: 20px 0;
             flex-wrap: wrap;
         }
 
@@ -53,51 +64,47 @@
         }
 
         .first img {
-            width: 140px;
+            width: 120px;
         }
 
         .second img {
-            width: 110px;
+            width: 95px;
         }
 
         .third img {
-            width: 100px;
+            width: 90px;
         }
 
         .zombie .name {
+            font-size: 13px;
             margin-top: 6px;
-            font-size: 14px;
             text-shadow: 2px 2px #000;
         }
 
         .zombie .points {
-            font-size: 12px;
+            font-size: 11px;
             color: #ddd;
         }
 
-        .title-image {
-            text-align: center;
-            margin-bottom: 15px;
+        /* 🎮 BUTTON */
+        .show-ranking {
+            display: none;
+            justify-content: center;
+            margin: 20px 0;
         }
 
-        .title-image img {
-            max-width: 100%;
-            width: 420px;
-            image-rendering: pixelated;
+        .show-ranking button {
+            padding: 14px 20px;
+            font-size: 14px;
+            background: #5a5a5a;
+            border: 4px solid #2f2f2f;
+            box-shadow: inset 0 0 0 3px #8b8b8b;
+            cursor: pointer;
         }
 
-        @media (max-width: 600px) {
-            .title-image {
-                margin-bottom: 8px;
-            }
-
-            .title-image img {
-                width: 280px;
-                /* 👈 más compacta */
-            }
+        .show-ranking button:hover {
+            background: #3f3f3f;
         }
-
-
 
         /* 📦 PANEL */
         .panel {
@@ -108,13 +115,6 @@
             box-shadow: inset 0 0 0 5px #8b8b8b;
             padding: 15px;
         }
-
-        @media (max-width: 600px) {
-            .panel {
-                padding: 10px;
-            }
-        }
-
 
         /* 🔍 SEARCH */
         .search {
@@ -134,16 +134,12 @@
         }
 
         button {
-            padding: 8px 12px;
             font-family: 'Minecraft', monospace;
             background: #5a5a5a;
             border: 4px solid #2f2f2f;
             color: #fff;
             cursor: pointer;
-        }
-
-        button:hover {
-            background: #3f3f3f;
+            padding: 8px 12px;
         }
 
         /* 📋 TABLE */
@@ -179,33 +175,14 @@
             margin-top: 10px;
         }
 
-        /* 📱 MOBILE */
+        /* 📱 MOBILE LOGIC */
         @media (max-width: 600px) {
-
-            .podium {
-                margin: 10px 0 15px 0;
-                /* 👈 menos aire */
-                gap: 10px;
+            .panel {
+                display: none;
             }
 
-            .first img {
-                width: 110px;
-            }
-
-            .second img {
-                width: 90px;
-            }
-
-            .third img {
-                width: 85px;
-            }
-
-            .zombie .name {
-                font-size: 12px;
-            }
-
-            .zombie .points {
-                font-size: 11px;
+            .show-ranking {
+                display: flex;
             }
         }
     </style>
@@ -215,14 +192,16 @@
     <div class="overlay">
 
         <div class="title-image">
-            <img src="titulo.png" alt="Arena de Gladiadores">
+            <img src="titulo.png">
         </div>
 
-        <!-- 🏆 PODIUM -->
         <div class="podium" id="podium"></div>
 
-        <div class="panel">
+        <div class="show-ranking">
+            <button onclick="showRanking()">Ver mi posición en el ranking</button>
+        </div>
 
+        <div class="panel" id="rankingPanel">
             <div class="search">
                 <input id="searchInput" placeholder="Buscar gladiador...">
                 <button onclick="search()">Buscar</button>
@@ -235,7 +214,7 @@
                         <th>Posición</th>
                         <th>Gladiador</th>
                         <th>Nivel</th>
-                        <th>Puntos de Arena</th>
+                        <th>Puntos</th>
                     </tr>
                 </thead>
                 <tbody id="tbody"></tbody>
@@ -246,8 +225,8 @@
                 <span id="pageInfo"></span>
                 <button onclick="next()">▶</button>
             </div>
-
         </div>
+
     </div>
 
     <script>
@@ -281,35 +260,36 @@
                 renderTable();
             });
 
-        /* 🏆 PODIUM */
         function renderPodium() {
             const p = document.getElementById("podium");
+            const order = [2, 0, 1];
+            const cls = ["third", "first", "second"];
+            const img = ["Jugador_3.png", "Jugador_1.png", "Jugador_2.png"];
+
             p.innerHTML = "";
 
-            const order = [2, 0, 1]; // third, first, second
-            const classes = ["third", "first", "second"];
-            const images = ["Jugador_3.png", "Jugador_1.png", "Jugador_2.png"];
-
-            for (let i = 0; i < 3 && i < players.length; i++) {
+            for (let i = 0; i < 3; i++) {
                 const pl = players[order[i]];
                 p.innerHTML += `
-        <div class="zombie ${classes[i]}">
-            <img src="${images[i]}">
+        <div class="zombie ${cls[i]}">
+            <img src="${img[i]}">
             <div class="name">${pl.username}</div>
             <div class="points">${pl.arena} victorias</div>
         </div>`;
             }
         }
 
-        /* 📋 TABLE */
+        function showRanking() {
+            const panel = document.getElementById("rankingPanel");
+            panel.style.display = "block";
+            panel.scrollIntoView({ behavior: "smooth" });
+        }
+
         function renderTable() {
-            const tbody = document.getElementById("tbody");
             tbody.innerHTML = "";
-
             const start = page * PAGE_SIZE;
-            const end = start + PAGE_SIZE;
 
-            for (let i = start; i < end && i < filtered.length; i++) {
+            for (let i = start; i < start + PAGE_SIZE && i < filtered.length; i++) {
                 const p = filtered[i];
                 tbody.innerHTML += `
         <tr>
