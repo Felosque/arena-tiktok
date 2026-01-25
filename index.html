@@ -7,6 +7,9 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <!-- 🧠 ICONO -->
+    <link rel="icon" type="image/x-icon" href="icono.ico">
+
     <link href="https://fonts.cdnfonts.com/css/minecraft-4" rel="stylesheet">
 
     <style>
@@ -18,31 +21,33 @@
         }
 
         .overlay {
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.65);
             min-height: 100vh;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-between;
         }
 
         /* 🖼️ TITLE */
+        .title-image {
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
         .title-image img {
-            width: 320px;
+            width: 340px;
             max-width: 90vw;
             image-rendering: pixelated;
-            margin-top: 10px;
         }
 
         /* 🏆 PODIO */
         .podium {
-            flex: 1;
             display: flex;
             align-items: flex-end;
             justify-content: center;
-            gap: 30px;
-            margin: 20px 0 10px;
+            gap: 32px;
+            margin-bottom: 30px;
         }
 
         .zombie {
@@ -57,19 +62,19 @@
         }
 
         .first {
-            transform: scale(1.25);
+            transform: scale(1.3);
         }
 
         .first img {
-            width: 180px;
+            width: 190px;
         }
 
         .second img {
-            width: 150px;
+            width: 155px;
         }
 
         .third img {
-            width: 135px;
+            width: 140px;
         }
 
         .name {
@@ -86,16 +91,16 @@
 
         /* 🔘 BOTONES */
         .buttons {
-            margin: 20px 0;
+            margin-top: 10px;
             display: flex;
-            gap: 16px;
+            gap: 18px;
             flex-wrap: wrap;
             justify-content: center;
         }
 
         .buttons button,
         .buttons a {
-            padding: 14px 26px;
+            padding: 14px 28px;
             font-family: 'Minecraft', monospace;
             font-size: 14px;
             background: #5a5a5a;
@@ -128,19 +133,19 @@
             }
 
             .first {
-                transform: scale(1.1);
+                transform: scale(1.15);
             }
 
             .first img {
-                width: 140px;
+                width: 145px;
             }
 
             .second img {
-                width: 120px;
+                width: 125px;
             }
 
             .third img {
-                width: 110px;
+                width: 115px;
             }
         }
     </style>
