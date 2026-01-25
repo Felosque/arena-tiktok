@@ -16,7 +16,7 @@
         }
 
         .overlay {
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.85);
             min-height: 100vh;
             padding: 30px;
         }
@@ -24,7 +24,6 @@
         h1 {
             text-align: center;
             text-shadow: 4px 4px #000;
-            margin-bottom: 20px;
         }
 
         .panel {
@@ -36,6 +35,46 @@
             padding: 20px;
         }
 
+        /* 🏆 PODIO */
+        .podium {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .zombie {
+            text-align: center;
+        }
+
+        .zombie img {
+            width: 90px;
+            image-rendering: pixelated;
+        }
+
+        .zombie .name {
+            margin-top: 6px;
+            font-size: 14px;
+        }
+
+        .first img {
+            width: 110px;
+        }
+
+        .first {
+            color: gold;
+        }
+
+        .second {
+            color: silver;
+        }
+
+        .third {
+            color: #cd7f32;
+        }
+
+        /* 🔍 BUSCADOR */
         .search {
             display: flex;
             gap: 10px;
@@ -64,6 +103,7 @@
             background: #3f3f3f;
         }
 
+        /* 📋 TABLA */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -104,6 +144,10 @@
 
         <div class="panel">
 
+            <!-- 🏆 PODIO -->
+            <div class="podium" id="podium"></div>
+
+            <!-- 🔍 BUSCADOR -->
             <div class="search">
                 <input id="searchInput" placeholder="Buscar gladiador...">
                 <button onclick="search()">Buscar</button>
@@ -138,12 +182,15 @@
         let filtered = [];
         let page = 0;
 
-        // Leer user.csv automáticamente (JS PURO)
-        fetch("user.csv")
+        fetch("users.csv")
             .then(r => r.text())
             .then(csv => {
-                const lines = csv.trim().split("\n");
-                const headers = lines[0].split(",");
+                const lines = csv
+                    .replace(/\r/g, "")
+                    .split("\n")
+                    .filter(l => l.trim() !== "");
+
+                const headers = lines[0].split(",").map(h => h.trim());
 
                 const u = headers.indexOf("username");
                 const l = headers.indexOf("level");
@@ -152,18 +199,34 @@
                 for (let i = 1; i < lines.length; i++) {
                     const cols = lines[i].split(",");
                     players.push({
-                        position: i,           // posición real del CSV
+                        position: i,              // lógica JS
                         username: cols[u],
                         level: cols[l],
                         arena: cols[a]
                     });
                 }
 
+                renderPodium();
                 filtered = players;
-                render();
+                renderTable();
             });
 
-        function render() {
+        function renderPodium() {
+            const podium = document.getElementById("podium");
+            podium.innerHTML = "";
+
+            const medals = ["first", "second", "third"];
+
+            for (let i = 0; i < 3 && i < players.length; i++) {
+                podium.innerHTML += `
+        <div class="zombie ${medals[i]}">
+            <img src="https://i.imgur.com/6X4E6oM.png">
+            <div class="name">#${i + 1} ${players[i].username}</div>
+        </div>`;
+            }
+        }
+
+        function renderTable() {
             const tbody = document.getElementById("tbody");
             tbody.innerHTML = "";
 
@@ -182,36 +245,36 @@
             }
 
             document.getElementById("pageInfo").innerText =
-                "Página " + (page + 1) + " / " + Math.ceil(filtered.length / PAGE_SIZE);
+                `Página ${page + 1} / ${Math.ceil(filtered.length / PAGE_SIZE)}`;
         }
 
         function search() {
-            const q = document.getElementById("searchInput").value.toLowerCase();
+            const q = searchInput.value.toLowerCase();
             filtered = players.filter(p =>
                 p.username.toLowerCase().includes(q)
             );
             page = 0;
-            render();
+            renderTable();
         }
 
         function reset() {
-            document.getElementById("searchInput").value = "";
+            searchInput.value = "";
             filtered = players;
             page = 0;
-            render();
+            renderTable();
         }
 
         function next() {
             if ((page + 1) * PAGE_SIZE < filtered.length) {
                 page++;
-                render();
+                renderTable();
             }
         }
 
         function prev() {
             if (page > 0) {
                 page--;
-                render();
+                renderTable();
             }
         }
     </script>
