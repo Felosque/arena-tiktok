@@ -12,7 +12,7 @@
             margin: 0;
             font-family: 'Minecraft', monospace;
             color: #fff;
-            background: url("https://i.imgur.com/W6QbKzB.jpg") center/cover fixed;
+            background: url("https://i.imgur.com/W6QbKzB.jpg") center / cover fixed;
         }
 
         .overlay {
@@ -24,10 +24,11 @@
         h1 {
             text-align: center;
             text-shadow: 4px 4px #000;
+            margin-bottom: 20px;
         }
 
         .panel {
-            max-width: 1000px;
+            max-width: 1100px;
             margin: auto;
             background: #c6c6c6;
             border: 5px solid #2f2f2f;
@@ -38,7 +39,7 @@
         .search {
             display: flex;
             gap: 10px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         input {
@@ -51,7 +52,7 @@
         }
 
         button {
-            padding: 10px;
+            padding: 10px 16px;
             font-family: 'Minecraft', monospace;
             background: #5a5a5a;
             border: 4px solid #2f2f2f;
@@ -91,7 +92,7 @@
             display: flex;
             justify-content: center;
             gap: 10px;
-            margin-top: 10px;
+            margin-top: 12px;
         }
     </style>
 </head>
@@ -112,6 +113,7 @@
             <table>
                 <thead>
                     <tr>
+                        <th>Posición</th>
                         <th>Gladiador</th>
                         <th>Nivel</th>
                         <th>Puntos de Arena</th>
@@ -131,12 +133,13 @@
 
     <script>
         const PAGE_SIZE = 100;
+
         let players = [];
         let filtered = [];
         let page = 0;
 
-        // JS PURO leyendo user.csv
-        fetch("users.csv")
+        // Leer user.csv automáticamente (JS PURO)
+        fetch("user.csv")
             .then(r => r.text())
             .then(csv => {
                 const lines = csv.trim().split("\n");
@@ -147,11 +150,12 @@
                 const a = headers.indexOf("arena_points");
 
                 for (let i = 1; i < lines.length; i++) {
-                    const c = lines[i].split(",");
+                    const cols = lines[i].split(",");
                     players.push({
-                        username: c[u],
-                        level: c[l],
-                        arena: c[a]
+                        position: i,           // posición real del CSV
+                        username: cols[u],
+                        level: cols[l],
+                        arena: cols[a]
                     });
                 }
 
@@ -167,20 +171,22 @@
             const end = start + PAGE_SIZE;
 
             for (let i = start; i < end && i < filtered.length; i++) {
+                const p = filtered[i];
                 tbody.innerHTML += `
         <tr>
-            <td>${filtered[i].username}</td>
-            <td>${filtered[i].level}</td>
-            <td>${filtered[i].arena}</td>
+            <td>${p.position}</td>
+            <td>${p.username}</td>
+            <td>${p.level}</td>
+            <td>${p.arena}</td>
         </tr>`;
             }
 
             document.getElementById("pageInfo").innerText =
-                `Página ${page + 1} / ${Math.ceil(filtered.length / PAGE_SIZE)}`;
+                "Página " + (page + 1) + " / " + Math.ceil(filtered.length / PAGE_SIZE);
         }
 
         function search() {
-            const q = searchInput.value.toLowerCase();
+            const q = document.getElementById("searchInput").value.toLowerCase();
             filtered = players.filter(p =>
                 p.username.toLowerCase().includes(q)
             );
@@ -189,7 +195,7 @@
         }
 
         function reset() {
-            searchInput.value = "";
+            document.getElementById("searchInput").value = "";
             filtered = players;
             page = 0;
             render();
