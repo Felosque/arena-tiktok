@@ -4,9 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Arena de Gladiadores</title>
-
     <link href="https://fonts.cdnfonts.com/css/minecraft-4" rel="stylesheet">
-
     <style>
         body {
             margin: 0;
@@ -39,7 +37,7 @@
             justify-content: center;
             align-items: flex-end;
             gap: 12px;
-            margin: 15px 0;
+            margin: 15px 0 30px 0;
         }
 
         .zombie {
@@ -73,26 +71,30 @@
             color: #ddd;
         }
 
-        /* ===== BUTTON ===== */
+        /* ===== SHOW RANKING BUTTON ===== */
         .show-ranking {
             display: flex;
             justify-content: center;
-            margin: 20px 0;
+            margin: 25px 0 35px 0;
         }
 
         .show-ranking button {
             padding: 14px 22px;
-            font-size: 14px;
+            font-size: 16px;
             font-family: 'Minecraft', monospace;
             background: #5a5a5a;
             border: 4px solid #2f2f2f;
             box-shadow: inset 0 0 0 3px #8b8b8b;
             color: #fff;
             cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .show-ranking button:hover {
             background: #3f3f3f;
+            transform: scale(1.05);
+            transition: transform 0.2s;
         }
 
         /* ===== PANEL ===== */
@@ -103,6 +105,7 @@
             border: 5px solid #2f2f2f;
             box-shadow: inset 0 0 0 5px #8b8b8b;
             padding: 12px;
+            margin-top: 20px;
         }
 
         .hidden {
@@ -169,10 +172,6 @@
 
         /* ===== DESKTOP ===== */
         @media (min-width: 768px) {
-            .show-ranking {
-                display: none;
-            }
-
             .panel {
                 display: block !important;
             }
@@ -190,10 +189,10 @@
         <div class="podium" id="podium"></div>
 
         <div class="show-ranking">
-            <button onclick="toggleRanking()">Ver mi posición en el ranking</button>
+            <button id="showRankingBtn" onclick="toggleRanking()">Ver mi ranking</button>
         </div>
 
-        <!-- TABLA ARRANCA OCULTA -->
+        <!-- TABLA OCULTA INICIALMENTE -->
         <div class="panel hidden" id="rankingPanel">
 
             <div class="search">
@@ -275,13 +274,26 @@
 
         function toggleRanking() {
             const panel = document.getElementById("rankingPanel");
-            panel.classList.remove("hidden");
-            panel.scrollIntoView({ behavior: "smooth" });
+            const button = document.getElementById("showRankingBtn");
+
+            if (panel.classList.contains("hidden")) {
+                // Mostrar la tabla
+                panel.classList.remove("hidden");
+                button.textContent = "Ocultar ranking";
+                panel.scrollIntoView({ behavior: "smooth" });
+            } else {
+                // Ocultar la tabla
+                panel.classList.add("hidden");
+                button.textContent = "Ver mi ranking";
+            }
         }
 
         function renderTable() {
-            tbody.innerHTML = "";
+            const tbody = document.getElementById("tbody");
+            const pageInfo = document.getElementById("pageInfo");
             const start = page * PAGE_SIZE;
+
+            tbody.innerHTML = "";
 
             for (let i = start; i < start + PAGE_SIZE && i < filtered.length; i++) {
                 const p = filtered[i];
@@ -294,10 +306,12 @@
         </tr>`;
             }
 
-            pageInfo.innerText = `Página ${page + 1} / ${Math.ceil(filtered.length / PAGE_SIZE)}`;
+            const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+            pageInfo.innerText = `Página ${page + 1} / ${totalPages}`;
         }
 
         function search() {
+            const searchInput = document.getElementById("searchInput");
             const q = searchInput.value.toLowerCase();
             filtered = players.filter(p => p.username.toLowerCase().includes(q));
             page = 0;
@@ -305,6 +319,7 @@
         }
 
         function reset() {
+            const searchInput = document.getElementById("searchInput");
             searchInput.value = "";
             filtered = players;
             page = 0;
