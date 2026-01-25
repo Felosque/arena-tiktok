@@ -68,6 +68,18 @@
             color: #ddd;
         }
 
+        .title-image {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .title-image img {
+            max-width: 100%;
+            width: 420px;
+            image-rendering: pixelated;
+        }
+
+
         /* 📦 PANEL */
         .panel {
             max-width: 1100px;
@@ -165,7 +177,9 @@
 <body>
     <div class="overlay">
 
-        <h1>⚔ Arena de Gladiadores ⚔</h1>
+        <div class="title-image">
+            <img src="titulo.png" alt="Arena de Gladiadores">
+        </div>
 
         <!-- 🏆 PODIUM -->
         <div class="podium" id="podium"></div>
