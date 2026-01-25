@@ -12,7 +12,7 @@
             margin: 0;
             font-family: 'Minecraft', monospace;
             color: #fff;
-            background: url("https://i.imgur.com/W6QbKzB.jpg") center / cover fixed;
+            background: url("fondo.png") center / cover fixed;
         }
 
         .overlay {
@@ -24,15 +24,7 @@
         h1 {
             text-align: center;
             text-shadow: 4px 4px #000;
-        }
-
-        .panel {
-            max-width: 1100px;
-            margin: auto;
-            background: #c6c6c6;
-            border: 5px solid #2f2f2f;
-            box-shadow: inset 0 0 0 5px #8b8b8b;
-            padding: 20px;
+            margin-bottom: 10px;
         }
 
         /* 🏆 PODIO */
@@ -40,8 +32,8 @@
             display: flex;
             justify-content: center;
             align-items: flex-end;
-            gap: 40px;
-            margin-bottom: 30px;
+            gap: 50px;
+            margin: 30px 0;
         }
 
         .zombie {
@@ -49,17 +41,19 @@
         }
 
         .zombie img {
-            width: 90px;
             image-rendering: pixelated;
         }
 
-        .zombie .name {
-            margin-top: 6px;
-            font-size: 14px;
+        .first img {
+            width: 120px;
         }
 
-        .first img {
-            width: 110px;
+        .second img {
+            width: 100px;
+        }
+
+        .third img {
+            width: 90px;
         }
 
         .first {
@@ -72,6 +66,22 @@
 
         .third {
             color: #cd7f32;
+        }
+
+        .zombie .name {
+            margin-top: 8px;
+            font-size: 14px;
+            text-shadow: 2px 2px #000;
+        }
+
+        /* 📦 PANEL */
+        .panel {
+            max-width: 1100px;
+            margin: auto;
+            background: #c6c6c6;
+            border: 5px solid #2f2f2f;
+            box-shadow: inset 0 0 0 5px #8b8b8b;
+            padding: 20px;
         }
 
         /* 🔍 BUSCADOR */
@@ -142,12 +152,11 @@
 
         <h1>⚔ Arena de Gladiadores ⚔</h1>
 
+        <!-- 🏆 PODIO FUERA DE LA TABLA -->
+        <div class="podium" id="podium"></div>
+
         <div class="panel">
 
-            <!-- 🏆 PODIO -->
-            <div class="podium" id="podium"></div>
-
-            <!-- 🔍 BUSCADOR -->
             <div class="search">
                 <input id="searchInput" placeholder="Buscar gladiador...">
                 <button onclick="search()">Buscar</button>
@@ -182,6 +191,7 @@
         let filtered = [];
         let page = 0;
 
+        // Cargar CSV
         fetch("users.csv")
             .then(r => r.text())
             .then(csv => {
@@ -197,12 +207,12 @@
                 const a = headers.indexOf("arena_points");
 
                 for (let i = 1; i < lines.length; i++) {
-                    const cols = lines[i].split(",");
+                    const c = lines[i].split(",");
                     players.push({
-                        position: i,              // lógica JS
-                        username: cols[u],
-                        level: cols[l],
-                        arena: cols[a]
+                        position: i,
+                        username: c[u],
+                        level: c[l],
+                        arena: c[a]
                     });
                 }
 
@@ -211,21 +221,29 @@
                 renderTable();
             });
 
+        // 🏆 PODIO
         function renderPodium() {
             const podium = document.getElementById("podium");
             podium.innerHTML = "";
 
-            const medals = ["first", "second", "third"];
+            const images = [
+                "Jugador_1.png",
+                "Jugador_2.png",
+                "Jugador_3.png"
+            ];
+
+            const classes = ["first", "second", "third"];
 
             for (let i = 0; i < 3 && i < players.length; i++) {
                 podium.innerHTML += `
-        <div class="zombie ${medals[i]}">
-            <img src="https://i.imgur.com/6X4E6oM.png">
+        <div class="zombie ${classes[i]}">
+            <img src="${images[i]}" alt="Zombie ${i + 1}">
             <div class="name">#${i + 1} ${players[i].username}</div>
         </div>`;
             }
         }
 
+        // 📋 TABLA
         function renderTable() {
             const tbody = document.getElementById("tbody");
             tbody.innerHTML = "";
@@ -244,7 +262,7 @@
         </tr>`;
             }
 
-            document.getElementById("pageInfo").innerText =
+            pageInfo.innerText =
                 `Página ${page + 1} / ${Math.ceil(filtered.length / PAGE_SIZE)}`;
         }
 
