@@ -18,41 +18,28 @@
         .overlay {
             background: rgba(0, 0, 0, 0.85);
             min-height: 100vh;
-            padding: 20px;
+            padding: 16px;
         }
 
-        @media (max-width: 600px) {
-            .overlay {
-                padding: 10px;
-            }
-        }
-
-        /* 🖼️ TITLE */
+        /* ===== TITLE ===== */
         .title-image {
             text-align: center;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .title-image img {
-            width: 420px;
+            width: 260px;
             max-width: 100%;
             image-rendering: pixelated;
         }
 
-        @media (max-width: 600px) {
-            .title-image img {
-                width: 260px;
-            }
-        }
-
-        /* 🏆 PODIUM */
+        /* ===== PODIUM ===== */
         .podium {
             display: flex;
             justify-content: center;
             align-items: flex-end;
-            gap: 15px;
-            margin: 20px 0;
-            flex-wrap: wrap;
+            gap: 12px;
+            margin: 15px 0;
         }
 
         .zombie {
@@ -86,19 +73,21 @@
             color: #ddd;
         }
 
-        /* 🎮 BUTTON */
+        /* ===== BUTTON ===== */
         .show-ranking {
-            display: none;
+            display: flex;
             justify-content: center;
             margin: 20px 0;
         }
 
         .show-ranking button {
-            padding: 14px 20px;
+            padding: 14px 22px;
             font-size: 14px;
+            font-family: 'Minecraft', monospace;
             background: #5a5a5a;
             border: 4px solid #2f2f2f;
             box-shadow: inset 0 0 0 3px #8b8b8b;
+            color: #fff;
             cursor: pointer;
         }
 
@@ -106,22 +95,25 @@
             background: #3f3f3f;
         }
 
-        /* 📦 PANEL */
+        /* ===== PANEL ===== */
         .panel {
             max-width: 1100px;
             margin: auto;
             background: #c6c6c6;
             border: 5px solid #2f2f2f;
             box-shadow: inset 0 0 0 5px #8b8b8b;
-            padding: 15px;
+            padding: 12px;
         }
 
-        /* 🔍 SEARCH */
+        .hidden {
+            display: none;
+        }
+
+        /* ===== SEARCH ===== */
         .search {
             display: flex;
             gap: 8px;
             margin-bottom: 10px;
-            flex-wrap: wrap;
         }
 
         input {
@@ -142,7 +134,7 @@
             padding: 8px 12px;
         }
 
-        /* 📋 TABLE */
+        /* ===== TABLE ===== */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -175,14 +167,14 @@
             margin-top: 10px;
         }
 
-        /* 📱 MOBILE LOGIC */
-        @media (max-width: 600px) {
-            .panel {
+        /* ===== DESKTOP ===== */
+        @media (min-width: 768px) {
+            .show-ranking {
                 display: none;
             }
 
-            .show-ranking {
-                display: flex;
+            .panel {
+                display: block !important;
             }
         }
     </style>
@@ -198,10 +190,12 @@
         <div class="podium" id="podium"></div>
 
         <div class="show-ranking">
-            <button onclick="showRanking()">Ver mi posición en el ranking</button>
+            <button onclick="toggleRanking()">Ver mi posición en el ranking</button>
         </div>
 
-        <div class="panel" id="rankingPanel">
+        <!-- TABLA ARRANCA OCULTA -->
+        <div class="panel hidden" id="rankingPanel">
+
             <div class="search">
                 <input id="searchInput" placeholder="Buscar gladiador...">
                 <button onclick="search()">Buscar</button>
@@ -255,8 +249,8 @@
                     });
                 }
 
-                renderPodium();
                 filtered = players;
+                renderPodium();
                 renderTable();
             });
 
@@ -279,9 +273,9 @@
             }
         }
 
-        function showRanking() {
+        function toggleRanking() {
             const panel = document.getElementById("rankingPanel");
-            panel.style.display = "block";
+            panel.classList.remove("hidden");
             panel.scrollIntoView({ behavior: "smooth" });
         }
 
